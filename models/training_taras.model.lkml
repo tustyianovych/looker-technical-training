@@ -8,9 +8,20 @@ datagroup: training_taras_default_datagroup {
   max_cache_age: "1 hour"
 }
 
-persist_with: training_taras_default_datagroup
+
+datagroup: training_taras_users_explore_default_datagroup  {
+  sql_trigger: select CURRENT_DATE ;;
+  max_cache_age: "24 hours"
+}
+
+datagroup: training_taras_order_items_explore_default_datagroup  {
+  sql_trigger: select max(created_at) from order_items ;;
+  max_cache_age: "4 hours"
+}
+
 
 explore: order_items {
+  persist_with: training_taras_order_items_explore_default_datagroup
   sql_always_where: ${returned_date} IS NULL AND ${status} = 'Complete' ;;
   sql_always_having: ${total_sales} > 200 AND ${count} > 5 ;;
   conditionally_filter: {
@@ -28,6 +39,7 @@ explore: order_items {
 }
 
 explore: users {
+  persist_with: training_taras_users_explore_default_datagroup
   always_filter: {
     filters: [
       users.created_date: "90 days"
