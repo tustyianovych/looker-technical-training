@@ -48,6 +48,23 @@ view: order_items {
     sql: ${TABLE}."ORDER_ID" ;;
   }
 
+  measure: distinct_orders {
+    type:  count_distinct
+    sql: ${order_id} ;;
+  }
+
+  measure: total_sales {
+    type: sum
+    sql: ${sale_price} ;;
+    value_format: "usd"
+  }
+
+  measure: average_sales {
+    type: average
+    sql: ${sale_price} ;;
+    value_format: "usd"
+  }
+
   dimension_group: returned {
     type: time
     timeframes: [
@@ -91,6 +108,31 @@ view: order_items {
     # hidden: yes
     sql: ${TABLE}."USER_ID" ;;
   }
+
+  measure: total_email_source {
+    type: sum
+    sql:  ${sale_price} ;;
+    filters: [users.traffic_source : "Email"]
+  }
+
+  measure: total_email_source_percen {
+    type: string
+    value_format_name: percent_2
+    sql:  1.0*${total_email_source}/NULLIF(${total_sales}, 0) ;;
+  }
+
+  measure: total_users {
+    type: sum_distinct
+    sql: ${user_id} ;;
+  }
+
+
+  measure: average_spend_per_user {
+    type: number
+    value_format_name: usd
+    sql:  1.0*${total_sales}/NULLIF(${total_users}, 0) ;;
+  }
+
 
   measure: count {
     type: count
