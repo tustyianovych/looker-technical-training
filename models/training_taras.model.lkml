@@ -11,8 +11,14 @@ datagroup: training_taras_default_datagroup {
 persist_with: training_taras_default_datagroup
 
 explore: order_items {
-  always_filter: {
-    filters: [order_items.status: "Completed", users.country: "USA"]
+  sql_always_where: ${returned_date} IS NULL AND ${status} = 'Complete' ;;
+  sql_always_having: ${total_sales} > 200 AND ${count} > 5 ;;
+  conditionally_filter: {
+    filters: [
+      order_items.created_date: "2 years"
+      ]
+      unless: [users.id]
+
   }
   join: users {
     type: left_outer
@@ -21,6 +27,12 @@ explore: order_items {
   }
 }
 
-explore: users {}
+explore: users {
+  always_filter: {
+    filters: [
+      users.created_date: "90 days"
+    ]
+  }
+}
 
 explore: inventory_items {}
