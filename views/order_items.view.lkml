@@ -38,6 +38,23 @@ view: order_items {
     sql: ${TABLE}."DELIVERED_AT" ;;
   }
 
+  parameter: select_timeframe {
+    type: unquoted
+    default_value: "created_month"
+    allowed_value: {
+      value: "created_date"
+      label: "Date"
+    }
+    allowed_value: {
+      value: "created_week"
+      label: "Week"
+    }
+    allowed_value: {
+      value: "created_month"
+      label: "Month"
+    }
+  }
+
   dimension: inventory_item_id {
     type: number
     # hidden: yes
